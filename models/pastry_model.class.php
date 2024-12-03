@@ -8,14 +8,17 @@
 class PastryModel {
     private Database $db; // Database object
     private mysqli $dbConnection; // Database connection object
-    private string $table; // Table name
+   //I need add the category table so I'm going to edit the table names private string $table; // Table name
     static private ?PastryModel $_instance = null;
+    private string $tblPastries;
+    private string $tblCategories;
 
     public function __construct() {
         $this->db = Database::getDatabase(); // Get the database instance
         $this->dbConnection = $this->db->getConnection(); // Get the database connection
-        $this->table = $this->db->getPastriesTable(); // Get the Pastries table name from the Database class
-
+        $this->tblPastries = $this->db->getPastriesTable(); // Get the Pastries table name from the Database class
+        $this->tblCategories = $this->db->getCategoriesTable(); //Get the Categories table from the database
+        
         //Escapes special characters in a string for use in an SQL statement. This stops SQL inject in POST vars.
         foreach ($_POST as $key => $value) {
             $_POST[$key] = $this->dbConnection->real_escape_string($value);
@@ -40,22 +43,26 @@ class PastryModel {
     }
 
     // Method to get a pastry by ID
-    public function get_pastry_by_id($pastryId) {
+    public function get_pastry_by_id($id): bool|Pastry {
         // SQL select statement
-        $sql = "SELECT * FROM $this->table WHERE pastry_id = $pastryId";
+        $sql = "SELECT * FROM $this->tblPastries WHERE pastry_id = $id";
 
         // Execute the query
         $result = $this->dbConnection->query($sql);
 
         //if the result failed, return false
-        if (!$result->num_rows == 0)
-            return 0;
+       // if (!$result->num_rows == 0)
+         //   return 0;
         //handle the result
         //create an array to store all returned pastries
-        $pastries = array();
+        //$pastries = array();
 
         //loop through all rows in returned recordsets
-        while ($row = $result->fetch_object()) {
+        //while
+        
+        if($result && $result->num_rows > 0){
+            $row = $result->fetch_object(); 
+            
             $pastry = new Pastry(
                 $row->category_id,
                 $row->name,
@@ -65,15 +72,16 @@ class PastryModel {
                 $row->in_menu
             );
             $pastry->setPastryID($row->pastry_id);
-            $pastries[] = $pastry;
+            return $pastries;
+        
         }
-        return $pastries;
+        return false;
     }
 
     // Method to get all pastries
     public function get_all_pastries() {
         // SQL select statement
-        $sql = "SELECT * FROM $this->table ORDER BY name ASC";
+        $sql = "SELECT * FROM $this->tblPastries ORDER BY name ASC";
 
         // Execute the query
         $result = $this->dbConnection->query($sql);
@@ -101,17 +109,24 @@ class PastryModel {
     public function search_pastries($terms): bool|array|int{
         $terms = explode (" ", $terms);
         //select statement for and search
-        $sql = "SELECT * FROM " . $this->table . " WHERE 1";
+       // need to add category tavle, join the two $sql = "SELECT * FROM " . $this->table . " WHERE 1";
+        $sql = "SELECT p.*, c.category_name 
+            FROM $this->tblPastries AS p 
+            JOIN $this->tblCategories AS c 
+            ON p.category_id = c.category_id 
+            WHERE 1 ";
         //Condition statement for each term in the search
         foreach ($terms as $term){
-            $sql .= "AND name LIKE '%'" . $terms . "'%'";
+            
+            //Update the statement with correct tables linked $sql .= "AND name LIKE '%'" . $terms . "'%'";
+            $sql .= "AND (p.name LIKE '%$terms%' OR c.category_name LIKE '%$terms%')";
         }
         //execute the query
         $result = $this->dbConnection->query($sql);
         //the search failed, return false
-        if (!$result){
+        if (!$result)
             return false;
-        }
+        
         //the search succeeded, but no pastry was found.
         if ($result->num_rows ==0)
             return 0;
@@ -158,7 +173,7 @@ class PastryModel {
         $inMenu = $this->dbConnection-> real_escape_string(trim(filter_input(INPUT_POST, 'in_menu', FILTER_VALIDATE_BOOLEAN)));
 
         // SQL update statement
-        $sql = "UPDATE $this->table 
+        $sql = "UPDATE $this->tblPastries 
                 SET name = '$name', category_id = $categoryId, description = '$description', price = $price, 
                  imagePath = '$imagePath', in_menu = '$inMenu'
                 WHERE pastry_id = $pastryId";
@@ -167,6 +182,23 @@ class PastryModel {
         return $this->dbConnection->query($sql);
 
     }
+    //Method to update a category by ID
+    public function update_category($categoryId): mysqli_result | bool{
+        //if the script did not recieved post data, display an error message and then terminate the script immediately
+        if (!filter_has_var(INPUT_POST, 'category_name')){
+            return false;
+        }
+        $categoryname = $this->dbConnection-> real_escape_string(trim(filter_input(INPUT_POST, 'category_name', FILTER_SANITIZE_STRING)));
+
+        //SQL update statement
+        $sql = "UPDATE $this->tblCategories SET category_name = '$categoryName'
+                WHERE category_id = $categoryId";
+        // Execute the query and return the result
+        return $this->dbConnection->query($sql);
+    }
+        
+    
+        
 
     //Need to Update these next
 
