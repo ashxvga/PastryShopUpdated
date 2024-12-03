@@ -72,7 +72,7 @@ class PastryModel {
                 $row->in_menu
             );
             $pastry->setPastryID($row->pastry_id);
-            return $pastries;
+            return $pastry;
         
         }
         return false;
@@ -188,7 +188,7 @@ class PastryModel {
         if (!filter_has_var(INPUT_POST, 'category_name')){
             return false;
         }
-        $categoryname = $this->dbConnection-> real_escape_string(trim(filter_input(INPUT_POST, 'category_name', FILTER_SANITIZE_STRING)));
+        $categoryName = $this->dbConnection-> real_escape_string(trim(filter_input(INPUT_POST, 'category_name', FILTER_SANITIZE_STRING)));
 
         //SQL update statement
         $sql = "UPDATE $this->tblCategories SET category_name = '$categoryName'
