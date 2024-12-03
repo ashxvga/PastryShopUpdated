@@ -43,9 +43,9 @@ class PastryModel {
     }
 
     // Method to get a pastry by ID
-    public function get_pastry_by_id($id): bool|Pastry {
+    public function get_pastry_by_id($pastryId): bool|Pastry {
         // SQL select statement
-        $sql = "SELECT * FROM $this->tblPastries WHERE pastry_id = $id";
+        $sql = "SELECT * FROM $this->tblPastries WHERE pastry_id = $pastryId";
 
         // Execute the query
         $result = $this->dbConnection->query($sql);
