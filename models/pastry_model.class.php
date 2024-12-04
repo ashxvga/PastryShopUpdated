@@ -236,7 +236,7 @@ class PastryModel {
         $categoryName = $this->dbConnection-> real_escape_string(trim(filter_input(INPUT_POST, 'category_name', FILTER_SANITIZE_STRING)));
         
         // SQL delete statement
-        $sql = "INSERT INTO $this->tblCategories (category_name) VALUES ('$categoryName');
+        $sql = "INSERT INTO $this->tblCategories (category_name) VALUES ('$categoryName')";
 
         // Execute the query and return the result
         return $this->dbConnection->query($sql) === true;
