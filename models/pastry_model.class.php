@@ -124,12 +124,14 @@ class PastryModel {
         //execute the query
         $result = $this->dbConnection->query($sql);
         //the search failed, return false
-        if (!$result)
+        if (!$result){
             return false;
+        }
         
         //the search succeeded, but no pastry was found.
-        if ($result->num_rows ==0)
+        if ($result->num_rows == 0) {
             return 0;
+        }
         //the search succeeded, and found at least one pastry
         //create an array to store all the returned pastries
         $pastries = array();
@@ -197,38 +199,59 @@ class PastryModel {
         return $this->dbConnection->query($sql);
     }
         
-    
-        
-
-    //Need to Update these next
 
     // Method to add a new pastry
-    public function add_pastry($name, $description, $price, $categoryId, $in_menu = 1, $imagePath = null) {
+    public function add_pastry($name, $description, $price, $categoryId, $inMenu = 1, $imagePath = null) : bool {
+
+        $name = $this->dbConnection-> real_escape_string(trim(filter_input(INPUT_POST, 'name', FILTER_SANITIZE_STRING)));
+        $categoryId = $this->dbConnection-> real_escape_string(trim(filter_input(INPUT_POST, 'category_id', FILTER_VALIDATE_INT)));
+        $description = $this->dbConnection-> real_escape_string(trim(filter_input(INPUT_POST, 'description', FILTER_SANITIZE_STRING)));
+        $price = $this->dbConnection-> real_escape_string(trim(filter_input(INPUT_POST, 'price', FILTER_VALIDATE_FLOAT)));
+        $imagePath = $this->dbConnection-> real_escape_string(trim(filter_input(INPUT_POST, 'image_path', FILTER_SANITIZE_STRING)));
+        $inMenu = $this->dbConnection-> real_escape_string(trim(filter_input(INPUT_POST, 'in_menu', FILTER_VALIDATE_BOOLEAN)));
+        
         // SQL insert statement
-        $sql = "INSERT INTO $this->table (name, description, price, category_id, in_menu, imagePath)
-                VALUES ('$name', '$description', $price, $categoryId, $in_menu, '$imagePath')";
+        $sql = "INSERT INTO $this->tblPastries (name, description, price, category_id, in_menu, imagePath)
+                VALUES ('$name', '$description', $price, $categoryId, $inMenu, '$imagePath')";
 
         // Execute the query and return the result
-        $query = $this->dbConnection->query($sql);
-
-        if ($query === true) {
-            return true;
-        }
-        return false;
+        return $this->dbConnection->query($sql) === true;
     }
 
     // Method to delete a pastry by ID
-    public function delete_pastry($pastryId) {
+    public function delete_pastry($pastryId) : bool{
+
+         $pastryId = $this->dbConnection-> real_escape_string(trim(filter_input(INPUT_POST, 'pastry_id', FILTER_VALIDATE_INT)));
+        
         // SQL delete statement
-        $sql = "DELETE FROM $this->table WHERE pastry_id = $pastryId";
+        $sql = "DELETE FROM $this->tblPastries WHERE pastry_id = $pastryId";
 
         // Execute the query and return the result
-        $query = $this->dbConnection->query($sql);
+        return $this->dbConnection->query($sql) === true;
+    }
 
-        if ($query === true) {
-            return true;
-        }
-        return false;
+    // Method to add a cateory by ID
+    public function add_category ($categoryName): bool{
+
+        $categoryName = $this->dbConnection-> real_escape_string(trim(filter_input(INPUT_POST, 'category_name', FILTER_SANITIZE_STRING)));
+        
+        // SQL delete statement
+        $sql = "INSERT INTO $this->tblCategories (category_name) VALUES ('$categoryName');
+
+        // Execute the query and return the result
+        return $this->dbConnection->query($sql) === true;
+    }
+    
+    // Method to delete a category by ID
+    public function delete_category($categoryId) : bool{
+
+         $categoryId = $this->dbConnection-> real_escape_string(trim(filter_input(INPUT_POST, 'category_id', FILTER_VALIDATE_INT)));
+        
+        // SQL delete statement
+        $sql = "DELETE FROM $this->tblCategories WHERE category_id = $categoryId";
+
+        // Execute the query and return the result
+        return $this->dbConnection->query($sql) === true;
     }
 }
 ?>
