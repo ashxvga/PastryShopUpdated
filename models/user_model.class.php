@@ -57,7 +57,7 @@ class UserModel{
     //verify password; if password is valid, set a temporary cookie
     if($result && $result->num_rows > 0) {
       $row = $result->fetch_assoc();
-      if (password_verify($password, $row['password_hash])) {
+      if (password_verify($password, $row['password_hash'])) {
         setcookie("user", $username, time() + 3600, "/");
         return true;
         }
