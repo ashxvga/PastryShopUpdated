@@ -83,7 +83,17 @@ class UserModel{
     $sql = "UPDATE $this->tblUsers SET password_hash = '$hashed_password' WHERE username = '$username'";
     return $this->dbConnection->query($sql) === true && $this->dbConnection->affected_rows >0;
   }
+
+  //Need to update
   //Method to update user's role
+  public function update_role ($userId, $role) : bool{
+   // if (!filter_has_var(INPUT_POST, 'category_name')){
+     //       return false;
+       // }
+    
+    $sql = "UPDATE $this->tblUsers SET role = 'role' WHERE user_id = $userid";
+    return $this->dbConnection->query($sql) === true
+  }
                           
   
   
