@@ -97,6 +97,24 @@ class PastryController{
             $this->error("There was a problem deleting the pastry id='" . $id . "'.");
             return;
         }
+        // Confirmation message
+        $confirm = "The pastry was successfully deleted.";
+        echo $confirm;
+    }
+
+    public function addPastry(): void {
+        // Add the pastry
+        $added = $this->pastry_model->add_pastry();
+
+        if (!$added) {
+            // Handle errors
+            $this->error("There was a problem adding the new pastry.");
+            return;
+        }
+
+        // Confirmation message
+        $confirm = "The pastry was successfully added.";
+        echo $confirm;
     }
 
     //search pastries
