@@ -115,7 +115,7 @@ class PastryModel {
         foreach ($terms as $term){
             
             //Update the statement with correct tables linked
-            $sql .= "WHERE name LIKE '%'" . $terms . "'%'";
+            $sql .= "WHERE name LIKE '%'" . $term . "'%'";
             //$sql .= "AND (p.name LIKE '%'" .$terms . "'%' OR c.category_name LIKE '%'" . $terms . "'%')";
         }
         //execute the query
