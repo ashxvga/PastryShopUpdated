@@ -110,18 +110,18 @@ class PastryModel {
         $terms = explode (" ", $terms);
         //select statement for and search
        // need to add category tavle, join the two $sql = "SELECT * FROM " . $this->table . " WHERE 1";
-       // $sql = "SELECT * FROM $this->tblPastries WHERE 0";
-        $sql = "SELECT * 
-                FROM $this->tblPastries AS p
-                JOIN $this->tblCategories AS c
-                ON p.category_id = c.category_id 
-                WHERE 0";
+       $sql = "SELECT * FROM $this->tblPastries WHERE 0";
+       // $sql = "SELECT * 
+             //   FROM $this->tblPastries AS p
+               // JOIN $this->tblCategories AS c
+                //ON p.category_id = c.category_id 
+                //WHERE 0";
         //Condition statement for each term in the search
         foreach ($terms as $term){
             
             //Update the statement with correct tables linked
-            $sql .= " OR (p.name LIKE '&'" . $term . "'%' OR c.category_name LIKE '%'" . $term . "'%')";
-           // $sql .= " OR name LIKE '%" . $term . "%'";
+           // $sql .= " OR (p.name LIKE '&'" . $term . "'%' OR c.category_name LIKE '%'" . $term . "'%')";
+            $sql .= " OR name LIKE '%" . $term . "%'";
         }
         //execute the query
         $result = $this->dbConnection->query($sql);
@@ -179,7 +179,7 @@ class PastryModel {
         // SQL update statement
         $sql = "UPDATE $this->tblPastries 
                 SET name = '$name', category_id = $categoryId, description = '$description', price = $price, 
-                 imagePath = '$imagePath', in_menu = '$inMenu'
+                 image_path = '$imagePath', in_menu = '$inMenu'
                 WHERE pastry_id = $pastryId";
 
         // Execute the query and return the result
