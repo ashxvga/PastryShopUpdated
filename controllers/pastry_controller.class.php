@@ -103,8 +103,20 @@ class PastryController{
     }
 
     public function addPastry(): void {
-        // Add the pastry
-        $added = $this->pastry_model->add_pastry();
+        // Collect input data from POST
+        $name = $_POST['name'] ?? null;
+        $description = $_POST['description'] ?? null;
+        $price = $_POST['price'] ?? null;
+        $categoryId = $_POST['category_id'] ?? null;
+
+        // Validate inputs
+        if (empty($name) || empty($description) || empty($price) || empty($categoryId)) {
+            $this->error("All fields are required to add a new pastry.");
+            return;
+        }
+
+        // Attempt to add the pastry
+        $added = $this->pastry_model->add_pastry($name, $description, (float)$price, (int)$categoryId);
 
         if (!$added) {
             // Handle errors
@@ -113,9 +125,9 @@ class PastryController{
         }
 
         // Confirmation message
-        $confirm = "The pastry was successfully added.";
-        echo $confirm;
+        echo "The pastry was successfully added.";
     }
+
 
     //search pastries
     public function search(): void {
