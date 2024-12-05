@@ -222,17 +222,16 @@ class PastryModel {
     }
 
     // Method to delete a pastry by ID
-    public function delete_pastry($pastryId) : bool{
-
-        $pastryId = $this->dbConnection-> real_escape_string(trim(filter_input(INPUT_POST, 'pastry_id', FILTER_VALIDATE_INT)));
+    public function delete_pastry($pastryId): bool {
+        // Sanitize and validate the pastry ID from GET instead of POST
+        $pastryId = $this->dbConnection->real_escape_string(trim(filter_var($pastryId, FILTER_VALIDATE_INT)));
 
         // SQL delete statement
-        $sql = "DELETE FROM $this->tblPastries WHERE pastry_id = $pastryId ";
-        exit($sql);
+        $sql = "DELETE FROM $this->tblPastries WHERE pastry_id = $pastryId";
+
         // Execute the query and return the result
         return $this->dbConnection->query($sql) === true;
     }
-
     // Method to add a cateory by ID
     public function add_category ($categoryName): bool{
 
