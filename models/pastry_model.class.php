@@ -110,16 +110,12 @@ class PastryModel {
         $terms = explode (" ", $terms);
         //select statement for and search
        // need to add category tavle, join the two $sql = "SELECT * FROM " . $this->table . " WHERE 1";
-        $sql = "SELECT p.*, c.category_name
-                FROM $this->tblPastries AS p
-                JOIN $this->tblCategories AS c
-                ON p.category_id = c.category_id
-                WHERE 1";
+        $sql = "SELECT FROM $this->tblPastries WHERE 1";
         //Condition statement for each term in the search
         foreach ($terms as $term){
             
             //Update the statement with correct tables linked
-            $sql .= " AND (p.name LIKE '%'" .$term . "'%' OR c.category_name LIKE '%'" . $term . "'%')";
+            $sql .= " AND name LIKE '%" . $term . "%'";
         }
         //execute the query
         $result = $this->dbConnection->query($sql);
