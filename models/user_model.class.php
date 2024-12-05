@@ -86,14 +86,14 @@ class UserModel{
 
   //Need to update
   //Method to update user's role
-  public function update_role ($userId, $role) : bool{
+ // public function update_role ($userId, $role) : bool{
    // if (!filter_has_var(INPUT_POST, 'category_name')){
      //       return false;
        // }
     
-    $sql = "UPDATE $this->tblUsers SET role = 'role' WHERE user_id = $userid";
-    return $this->dbConnection->query($sql) === true
-  }
+  //  $sql = "UPDATE $this->tblUsers SET role = 'role' WHERE user_id = $userid";
+  //  return $this->dbConnection->query($sql) === true
+ // }
                           
   
   
