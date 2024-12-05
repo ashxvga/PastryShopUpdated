@@ -169,7 +169,7 @@ class PastryModel {
         {
             return false;
         }
-        $name = $this->dbConnection-> real_escape_string(trim(filter_input(INPUT_POST, 'name', FILTER_SANITIZE_STRING)));
+        $name = $this->dbConnection->real_escape_string(trim(filter_input(INPUT_POST, 'name', FILTER_SANITIZE_STRING)));
         $categoryId = $this->dbConnection-> real_escape_string(trim(filter_input(INPUT_POST, 'category_id', FILTER_VALIDATE_INT)));
         $description = $this->dbConnection-> real_escape_string(trim(filter_input(INPUT_POST, 'description', FILTER_SANITIZE_STRING)));
         $price = $this->dbConnection-> real_escape_string(trim(filter_input(INPUT_POST, 'price', FILTER_VALIDATE_FLOAT)));
