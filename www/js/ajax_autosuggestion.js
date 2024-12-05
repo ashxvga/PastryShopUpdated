@@ -1,6 +1,31 @@
 /*
  * This script contains AJAX methods
+ *
+ * This script provides the function for the live search suggestion feature using AJAX
+ * It enables the user to get real-time suggestions in a dropdown style when typing something in the search box
+ * Core functionalities include:
+ *
+ * 1. Initialization:
+ * Creates an `XMLHttpRequest` object to facilitate asynchronous request to server.
+ *  - Caches DOM elements such as the search input box and suggestion container for efficient interaction.
+ *
+ * 2. Suggestion Handling:
+ * - Sends a GET request to a server endpoint with the user's query and receives a JSON response containing suggestions.
+ * - Dynamically updates and displays these suggestions in a dropdown-style interface.
+ *
+ * 3. User Interaction:
+ * - Allow the user to cycle through suggestions by using the keyboard arrow keys or by clicking.
+ * - Fill the search box with the selected suggestion and hide the dropdown when an option is selected or when clicking outside.
+ *
+ * 4. Key Functional Components:
+ * - `createXmlHttpRequestObject`: Provides cross-browser compatibility for AJAX functionality.
+ * - `suggest`: Fetches and processes server-side suggestions.
+ * - `displayNames`: Renders the suggestion dropdown dynamically based on server responses.
+ * - `handleKeyUp`: Allows navigation and selection of suggestions via keyboard input.
+ * - `clickName`: Handles mouse interaction for suggestion selection.
+ * This script is designed to provide a seamless and intuitive user experience for searching and selecting options in real-time.
  */
+
 var xmlHttp;
 var numNames = 0;  //total number of suggested pastry names
 var activeName = -1;  //pastry name currently being selected
@@ -108,7 +133,7 @@ function handleKeyUp(e) {
     if (e.keyCode === 40 && activeName < numNames - 1) {
         //add code here to handle down arrow key, e.g. select the next item
 
-        if(typeof(activeNameObj) != "undefined") {
+        if (typeof (activeNameObj) != "undefined") {
             activeNameObj.style.backgroundColor = "#FFF";
         }
         activeName++;
@@ -117,7 +142,6 @@ function handleKeyUp(e) {
         searchBoxObj.value = activeNameObj.innerHTML;
     }
 }
-
 
 
 //when a name is clicked, fill the search box with the name and then hide the suggestion list
