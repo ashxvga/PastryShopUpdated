@@ -8,7 +8,7 @@
 class PastryModel {
     private Database $db; // Database object
     private mysqli $dbConnection; // Database connection object
-   //I need add the category table so I'm going to edit the table names private string $table; // Table name
+    //I need add the category table so I'm going to edit the table names private string $table; // Table name
     static private ?PastryModel $_instance = null;
     private string $tblPastries;
     private string $tblCategories;
@@ -18,7 +18,7 @@ class PastryModel {
         $this->dbConnection = $this->db->getConnection(); // Get the database connection
         $this->tblPastries = $this->db->getPastriesTable(); // Get the Pastries table name from the Database class
         $this->tblCategories = $this->db->getCategoriesTable(); //Get the Categories table from the database
-        
+
         //Escapes special characters in a string for use in an SQL statement. This stops SQL inject in POST vars.
         foreach ($_POST as $key => $value) {
             $_POST[$key] = $this->dbConnection->real_escape_string($value);
@@ -51,18 +51,18 @@ class PastryModel {
         $result = $this->dbConnection->query($sql);
 
         //if the result failed, return false
-       // if (!$result->num_rows == 0)
-         //   return 0;
+        // if (!$result->num_rows == 0)
+        //   return 0;
         //handle the result
         //create an array to store all returned pastries
         //$pastries = array();
 
         //loop through all rows in returned recordsets
         //while
-        
+
         if($result && $result->num_rows > 0){
-            $row = $result->fetch_object(); 
-            
+            $row = $result->fetch_object();
+
             $pastry = new Pastry(
                 $row->category_id,
                 $row->name,
@@ -73,7 +73,7 @@ class PastryModel {
             );
             $pastry->setPastryID($row->pastry_id);
             return $pastry;
-        
+
         }
         return false;
     }
@@ -109,19 +109,19 @@ class PastryModel {
     public function search_pastries($terms): bool|array|int{
         $terms = explode (" ", $terms);
         //select statement for and search
-       // need to add category tavle, join the two $sql = "SELECT * FROM " . $this->table . " WHERE 1";
-       $sql = "SELECT * FROM $this->tblPastries WHERE 0";
-       // $sql = "SELECT * 
-             //   FROM $this->tblPastries AS p
-               // JOIN $this->tblCategories AS c
-                //ON p.category_id = c.category_id 
-                //WHERE 0";
+        // need to add category tavle, join the two $sql = "SELECT * FROM " . $this->table . " WHERE 1";
+         $sql = "SELECT * FROM $this->tblPastries WHERE 0";
+//        $sql = "SELECT *
+//                FROM $this->tblPastries AS p
+//                JOIN $this->tblCategories AS c
+//                ON p.pastry_id = c.category_id
+//                WHERE 0";
         //Condition statement for each term in the search
         foreach ($terms as $term){
-            
+
             //Update the statement with correct tables linked
-           // $sql .= " OR (p.name LIKE '&'" . $term . "'%' OR c.category_name LIKE '%'" . $term . "'%')";
-            $sql .= " OR name LIKE '%" . $term . "%'";
+            //$sql .= " OR (p.name LIKE '&'" . $term . "'%' OR c.category_name LIKE '%'" . $term . "'%')";
+             $sql .= " OR name LIKE '%" . $term . "%'";
         }
         //execute the query
         $result = $this->dbConnection->query($sql);
@@ -129,7 +129,7 @@ class PastryModel {
         if (!$result){
             return false;
         }
-        
+
         //the search succeeded, but no pastry was found.
         if ($result->num_rows == 0) {
             return 0;
@@ -193,7 +193,7 @@ class PastryModel {
             return false;
         }
         $categoryName = $this->dbConnection-> real_escape_string(trim(htmlspecialchars($_POST['category_name'])));
-            
+
 
         //SQL update statement
         $sql = "UPDATE $this->tblCategories SET category_name = '$categoryName'
@@ -201,7 +201,7 @@ class PastryModel {
         // Execute the query and return the result
         return $this->dbConnection->query($sql);
     }
-        
+
 
     // Method to add a new pastry
     public function add_pastry($name, $description, $price, $categoryId, $inMenu = 1, $imagePath = null) : bool {
@@ -211,12 +211,12 @@ class PastryModel {
         $description = $this->dbConnection-> real_escape_string(trim(htmlspecialchars($_POST['description'])));
         $price = $this->dbConnection-> real_escape_string(trim(filter_input(INPUT_POST, 'price', FILTER_VALIDATE_FLOAT)));
         $imagePath = $this->dbConnection-> real_escape_string(trim(htmlspecialchars($_POST['image_path'])));
-        $inMenu = $this->dbConnection-> real_escape_string(trim(filter_input(INPUT_POST, 'in_menu', FILTER_VALIDATE_BOOLEAN)));
-        
-        // SQL insert statement
-        $sql = "INSERT INTO $this->tblPastries (name, description, price, category_id, in_menu, imagePath)
-                VALUES ('$name', '$description', $price, $categoryId, $inMenu, '$imagePath')";
+        $inMenu = $this->dbConnection-> real_escape_string(trim(htmlspecialchars($_POST['in_menu'])));
 
+        // SQL insert statement
+        $sql = "INSERT INTO $this->tblPastries (name, description, price, category_id, in_menu, image_path)
+                VALUES ('$name', '$description', $price, $categoryId, '$inMenu', '$imagePath')";
+        //exit($sql);
         // Execute the query and return the result
         return $this->dbConnection->query($sql) === true;
     }
@@ -224,11 +224,11 @@ class PastryModel {
     // Method to delete a pastry by ID
     public function delete_pastry($pastryId) : bool{
 
-         $pastryId = $this->dbConnection-> real_escape_string(trim(filter_input(INPUT_POST, 'pastry_id', FILTER_VALIDATE_INT)));
-        
-        // SQL delete statement
-        $sql = "DELETE FROM $this->tblPastries WHERE pastry_id = $pastryId";
+        $pastryId = $this->dbConnection-> real_escape_string(trim(filter_input(INPUT_POST, 'pastry_id', FILTER_VALIDATE_INT)));
 
+        // SQL delete statement
+        $sql = "DELETE FROM $this->tblPastries WHERE pastry_id = $pastryId ";
+        exit($sql);
         // Execute the query and return the result
         return $this->dbConnection->query($sql) === true;
     }
@@ -236,20 +236,20 @@ class PastryModel {
     // Method to add a cateory by ID
     public function add_category ($categoryName): bool{
 
-        $categoryName =  $this->dbConnection-> real_escape_string(trim(htmlspecialchars($_POST['category_name'])));
-        
+        $categoryName = $this->dbConnection-> real_escape_string(trim(filter_input(INPUT_POST, 'category_name', FILTER_SANITIZE_STRING)));
+
         // SQL delete statement
         $sql = "INSERT INTO $this->tblCategories (category_name) VALUES ('$categoryName')";
 
         // Execute the query and return the result
         return $this->dbConnection->query($sql) === true;
     }
-    
+
     // Method to delete a category by ID
     public function delete_category($categoryId) : bool{
 
-         $categoryId = $this->dbConnection-> real_escape_string(trim(filter_input(INPUT_POST, 'category_id', FILTER_VALIDATE_INT)));
-        
+        $categoryId = $this->dbConnection-> real_escape_string(trim(filter_input(INPUT_POST, 'category_id', FILTER_VALIDATE_INT)));
+
         // SQL delete statement
         $sql = "DELETE FROM $this->tblCategories WHERE category_id = $categoryId";
 
