@@ -85,8 +85,6 @@ class PastryController{
             return;
         }
 
-        //display a confirmation message
-        echo "The category was successfully updated.";
     }
 
     //delete pastry
@@ -99,9 +97,6 @@ class PastryController{
             $this->error("There was a problem deleting the pastry id='" . $id . "'.");
             return;
         }
-
-        // Display a confirmation message
-        echo "The pastry was successfully deleted.";
     }
 
     //search pastries
