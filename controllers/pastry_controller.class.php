@@ -89,6 +89,21 @@ class PastryController{
         echo "The category was successfully updated.";
     }
 
+    //delete pastry
+    public function delete($id): void {
+        // Attempt to delete the pastry
+        $delete = $this->pastry_model->delete_pastry($id);
+
+        if (!$delete) {
+            // Handle errors
+            $this->error("There was a problem deleting the pastry id='" . $id . "'.");
+            return;
+        }
+
+        // Display a confirmation message
+        echo "The pastry was successfully deleted.";
+    }
+
     //search pastries
     public function search(): void {
         //retrieve query terms from search form
