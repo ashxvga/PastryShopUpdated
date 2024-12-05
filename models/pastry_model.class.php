@@ -119,7 +119,7 @@ class PastryModel {
         foreach ($terms as $term){
             
             //Update the statement with correct tables linked
-            $sql .= "AND (p.name LIKE '%'" .$term . "'%' OR c.category_name LIKE '%'" . $term . "'%')";
+            $sql .= " AND (p.name LIKE '%'" .$term . "'%' OR c.category_name LIKE '%'" . $term . "'%')";
         }
         //execute the query
         $result = $this->dbConnection->query($sql);
