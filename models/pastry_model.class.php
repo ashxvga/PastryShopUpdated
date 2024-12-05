@@ -236,7 +236,7 @@ class PastryModel {
     // Method to add a cateory by ID
     public function add_category ($categoryName): bool{
 
-        $categoryName = $this->dbConnection-> real_escape_string(trim(filter_input(INPUT_POST, 'category_name', FILTER_SANITIZE_STRING)));
+        $categoryName =  $this->dbConnection-> real_escape_string(trim(htmlspecialchars($_POST['category_name'])));
         
         // SQL delete statement
         $sql = "INSERT INTO $this->tblCategories (category_name) VALUES ('$categoryName')";
