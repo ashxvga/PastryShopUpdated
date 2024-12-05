@@ -110,7 +110,7 @@ class PastryModel {
         $terms = explode (" ", $terms);
         //select statement for and search
         // need to add category tavle, join the two $sql = "SELECT * FROM " . $this->table . " WHERE 1";
-         $sql = "SELECT * FROM $this->tblPastries WHERE 0";
+        $sql = "SELECT * FROM $this->tblPastries WHERE 0";
 //        $sql = "SELECT *
 //                FROM $this->tblPastries AS p
 //                JOIN $this->tblCategories AS c
@@ -121,7 +121,7 @@ class PastryModel {
 
             //Update the statement with correct tables linked
             //$sql .= " OR (p.name LIKE '&'" . $term . "'%' OR c.category_name LIKE '%'" . $term . "'%')";
-             $sql .= " OR name LIKE '%" . $term . "%'";
+            $sql .= " OR name LIKE '%" . $term . "%'";
         }
         //execute the query
         $result = $this->dbConnection->query($sql);
@@ -222,13 +222,13 @@ class PastryModel {
     }
 
     // Method to delete a pastry by ID
-    public function delete_pastry($pastryId): bool {
-        // Sanitize and validate the pastry ID from GET instead of POST
-        $pastryId = $this->dbConnection->real_escape_string(trim(filter_var($pastryId, FILTER_VALIDATE_INT)));
+    public function delete_pastry($pastryId) : bool{
+
+        $pastryId = $this->dbConnection-> real_escape_string(trim(filter_input(INPUT_POST, 'pastry_id', FILTER_VALIDATE_INT)));
 
         // SQL delete statement
-        $sql = "DELETE FROM $this->tblPastries WHERE pastry_id = $pastryId";
-
+        $sql = "DELETE FROM $this->tblPastries WHERE pastry_id = $pastryId ";
+        exit($sql);
         // Execute the query and return the result
         return $this->dbConnection->query($sql) === true;
     }
