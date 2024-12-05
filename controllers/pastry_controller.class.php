@@ -88,9 +88,9 @@ class PastryController{
     }
 
     //delete pastry
-    public function delete($id): void {
+    public function deletePastry($id): void {
         // Attempt to delete the pastry
-        $delete = $this->pastry_model->delete_pastry($id);
+        $delete = $this->pastry_model->get_pastry_by_id($id);
 
         if (!$delete) {
             // Handle errors
@@ -100,10 +100,20 @@ class PastryController{
         // Confirmation message
         $confirm = "The pastry was successfully deleted.";
         echo $confirm;
-
     }
 
-    public function addPastry(): void {
+    public function getPastryModel(): PastryModel
+    {
+        return $this->pastry_model;
+    }
+
+
+    public function add(): void {
+        $display = new PastryAdd();
+        $display->display();
+    }
+
+    public function createPastry(): void {
         // Collect input data from POST
         $name = $_POST['name'] ?? null;
         $description = $_POST['description'] ?? null;
@@ -117,7 +127,7 @@ class PastryController{
         }
 
         // Attempt to add the pastry
-        $added = $this->pastry_model->add_pastry($name, $description, (float)$price, (int)$categoryId);
+        $added = $this->pastry_model->add_pastry($name, $description, (float)$price, (int)$categoryId );
 
         if (!$added) {
             // Handle errors
