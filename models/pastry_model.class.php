@@ -169,11 +169,11 @@ class PastryModel {
         {
             return false;
         }
-        $name = $this->dbConnection->real_escape_string(trim(filter_input(INPUT_POST, 'name', FILTER_SANITIZE_STRING)));
+        $name = $this->dbConnection-> real_escape_string(trim(htmlspecialchars($_POST['name'])));
         $categoryId = $this->dbConnection-> real_escape_string(trim(filter_input(INPUT_POST, 'category_id', FILTER_VALIDATE_INT)));
-        $description = $this->dbConnection-> real_escape_string(trim(filter_input(INPUT_POST, 'description', FILTER_SANITIZE_STRING)));
+        $description = $this->dbConnection-> real_escape_string(trim(htmlspecialchars($_POST['description'])));
         $price = $this->dbConnection-> real_escape_string(trim(filter_input(INPUT_POST, 'price', FILTER_VALIDATE_FLOAT)));
-        $imagePath = $this->dbConnection-> real_escape_string(trim(filter_input(INPUT_POST, 'image_path', FILTER_SANITIZE_STRING)));
+        $imagePath = $this->dbConnection-> real_escape_string(trim(htmlspecialchars($_POST['image_path'])));
         $inMenu = $this->dbConnection-> real_escape_string(trim(filter_input(INPUT_POST, 'in_menu', FILTER_VALIDATE_BOOLEAN)));
 
         // SQL update statement
@@ -192,7 +192,8 @@ class PastryModel {
         if (!filter_has_var(INPUT_POST, 'category_name')){
             return false;
         }
-        $categoryName = $this->dbConnection-> real_escape_string(trim(filter_input(INPUT_POST, 'category_name', FILTER_SANITIZE_STRING)));
+        $categoryName = $this->dbConnection-> real_escape_string(trim(htmlspecialchars($_POST['category_name'])));
+            
 
         //SQL update statement
         $sql = "UPDATE $this->tblCategories SET category_name = '$categoryName'
@@ -205,11 +206,11 @@ class PastryModel {
     // Method to add a new pastry
     public function add_pastry($name, $description, $price, $categoryId, $inMenu = 1, $imagePath = null) : bool {
 
-        $name = $this->dbConnection-> real_escape_string(trim(filter_input(INPUT_POST, 'name', FILTER_SANITIZE_STRING)));
+        $name = $this->dbConnection-> real_escape_string(trim(htmlspecialchars($_POST['name'])));
         $categoryId = $this->dbConnection-> real_escape_string(trim(filter_input(INPUT_POST, 'category_id', FILTER_VALIDATE_INT)));
-        $description = $this->dbConnection-> real_escape_string(trim(filter_input(INPUT_POST, 'description', FILTER_SANITIZE_STRING)));
+        $description = $this->dbConnection-> real_escape_string(trim(htmlspecialchars($_POST['description'])));
         $price = $this->dbConnection-> real_escape_string(trim(filter_input(INPUT_POST, 'price', FILTER_VALIDATE_FLOAT)));
-        $imagePath = $this->dbConnection-> real_escape_string(trim(filter_input(INPUT_POST, 'image_path', FILTER_SANITIZE_STRING)));
+        $imagePath = $this->dbConnection-> real_escape_string(trim(htmlspecialchars($_POST['image_path'])));
         $inMenu = $this->dbConnection-> real_escape_string(trim(filter_input(INPUT_POST, 'in_menu', FILTER_VALIDATE_BOOLEAN)));
         
         // SQL insert statement
