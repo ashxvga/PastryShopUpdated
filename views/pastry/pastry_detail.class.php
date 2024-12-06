@@ -9,6 +9,11 @@ class PastryDetail extends IndexView{
     public function display($pastry, $confirm =""):void{
         parent::displayHeader("Pastry Details");
 
+        if (!$pastry) {
+            echo "<h2>Error: The requested pastry could not be found.</h2>";
+            echo "<p><a href='" . BASE_URL . "/pastry/index'>Return to Pastry List</a></p>";
+            return;
+        }
         //retrieving the details
         $id = $pastry->getPastryId();
         $name = $pastry->getName();
