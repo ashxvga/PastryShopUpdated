@@ -88,18 +88,19 @@ class PastryController{
     }
 
     //delete pastry
-    public function deletePastry($id): void {
+    public function delete($id): void {
         // Attempt to delete the pastry
-        $delete = $this->pastry_model->get_pastry_by_id($id);
+        $delete = $this->pastry_model->delete_pastry($id);
 
         if (!$delete) {
-            // Handle errors
+            // Handle errors and redirect
             $this->error("There was a problem deleting the pastry id='" . $id . "'.");
             return;
         }
-        // Confirmation message
-        $confirm = "The pastry was successfully deleted.";
-        echo $confirm;
+
+        // Redirect or display success message
+        header("Location: " . BASE_URL . "/pastry/index"); // Redirect to pastry list page
+        exit();
     }
 
     public function getPastryModel(): PastryModel

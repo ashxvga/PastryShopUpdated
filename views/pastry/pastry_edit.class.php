@@ -47,7 +47,8 @@ class PastryEdit extends IndexView {
                 <br>
                 <textarea name="description" rows="5" cols="50"><?= $description ?></textarea></p>
             <input class='whiteButtons' type="button" value="Cancel" onclick='window.location.href = "<?= BASE_URL . "/pastry/detail/" . $id ?>"'>
-            <input class='whiteButtons' type="button" value="Delete" onclick='window.location.href = "<?= BASE_URL . "/pastry/deletePastry/" . $id?>"'>
+            <input class='whiteButtons' type="button" value="Delete"
+                   onclick='if(confirm("Are you sure you want to delete this pastry?")) window.location.href = "<?= BASE_URL . "/pastry/delete/" . $id?>"'>
             <input type="submit" name="action" value="Update Pastry">
 
 
