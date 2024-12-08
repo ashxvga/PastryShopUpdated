@@ -5,7 +5,6 @@
  * File: user_controller.class.php
  * Description: The user controller handles user-related actions.
  */
-
 class UserController
 {
 
@@ -21,12 +20,21 @@ class UserController
     // Index action to display a generic user dashboard
     public function index(): void
     {
-        // Display a welcome message or default view
-        echo "Welcome to the User Dashboard!";
+        // Display the user dashboard view
+        $dashboardView = new UserDashboardView();
+        $dashboardView->display();
+    }
+
+    // Show the add user form
+    public function add(): void
+    {
+        // Display the add user form view
+        $addUserView = new AddUserView();
+        $addUserView->display();
     }
 
     // Add a new user
-    public function add(): void
+    public function add_user(): void
     {
         $result = $this->user_model->add_user();
         if (!$result) {
@@ -34,11 +42,63 @@ class UserController
             return;
         }
 
-        echo "User added successfully!";
+        // Redirect to user dashboard or show success message
+        header('Location: ' . BASE_URL . '/user/dashboard');
+        exit;
+    }
+
+    // Show the edit user form
+    public function edit($id): void
+    {
+        $user = $this->user_model->get_user_by_id($id);
+        if (!$user) {
+            $this->error("User not found.");
+            return;
+        }
+
+        // Display the edit user view
+        $editUserView = new EditUserView();
+        $editUserView->display($user);
+    }
+
+    // Update a user
+    public function update_user($id): void
+    {
+        $result = $this->user_model->update_user($id);
+        if (!$result) {
+            $this->error("Error: Unable to update the user.");
+            return;
+        }
+
+        // Redirect to user dashboard or show success message
+        header('Location: ' . BASE_URL . '/user/dashboard');
+        exit;
+    }
+
+    // Delete a user
+    public function delete($id): void
+    {
+        $result = $this->user_model->delete_user($id);
+        if (!$result) {
+            $this->error("Error deleting user.");
+            return;
+        }
+
+        // Redirect to user dashboard or show success message
+        header('Location: ' . BASE_URL . '/user/dashboard');
+        exit;
+    }
+
+    // Show the login form
+    public function login(): void
+    {
+        // Display the login view
+        $loginView = new LoginView();
+        $loginView->display();
     }
 
     // Verify user credentials and log them in
-    public function login(): void
+    public function login_user(): void
     {
         $result = $this->user_model->verify_user();
         if (!$result) {
@@ -46,16 +106,22 @@ class UserController
             return;
         }
 
-        echo "Login successful! Welcome.";
+        // Redirect to user dashboard or show success message
+        header('Location: ' . BASE_URL . '/user/dashboard');
+        exit;
     }
 
     // Log the user out
     public function logout(): void
     {
-        $result = $this->user_model->logout();
+        $result = $this->user_model->logout(); // Call the logout method of the model to destroy the session or authentication token
+
         if ($result) {
-            echo "Logout successful!";
+            // Redirect to login page after successful logout
+            header('Location: ' . BASE_URL . '/user/login');
+            exit; // Make sure the script stops after redirect
         } else {
+            // If logout failed, show an error message
             $this->error("Error logging out.");
         }
     }
@@ -69,18 +135,17 @@ class UserController
             return;
         }
 
-        echo "Password reset successful!";
+        // Redirect to login page or show success message
+        header('Location: ' . BASE_URL . '/user/login');
+        exit;
     }
 
     // Error handler
     public function error($message): void
     {
-        echo "<p style='color: red;'>Error: $message</p>";
+        // Display error message in a view
+        $errorView = new ErrorView();
+        $errorView->display($message);
     }
 
-    // Handle inaccessible methods
-    public function __call($name, $arguments)
-    {
-        $this->error("Calling method '$name' caused errors. Route does not exist.");
-    }
 }
