@@ -32,10 +32,10 @@ class UserModel{
       }
       //Handle data length excpection. The min length of a password is 5
       if (strlen($password) < 5){
-        throw new DataLengthException ("Your password was invalid. The minium length of a password is 5."
+        throw new DataLengthException ("Your password was invalid. The minium length of a password is 5.");
       }
       //Handle email format exeception.
-      if (!Utilities:::checkemail ($email)) {
+      if (!Utilities::checkemail ($email)) {
         throw new EmailFormatException ("Your email format was invalid. The general format of an email address is user@example.com");
       }
     //Hash the password
@@ -43,13 +43,10 @@ class UserModel{
     //Check if username or email exists
     $check = "SELECT * FROM $this->tblUsers WHERE username = '$username' OR email = '$email'";
     $result = $this->dbConnection->query($check);
-    //Return false
-    if ($this->dbConnection->query($sql) === FALSE 
-    }
     //SQL INSERT statement
     $sql = " INSERT INTO $this->tblUsers (username, password_hash, email, first_name, last_name, role)
             VALUES ('$username', '$hashed_password', '$email', '$firstName', '$lastName', '$role')";
-    if ( $this->dbConnection->query($sql) === FALSE {
+    if ( $this->dbConnection->query($sql) === FALSE) {
         throw new DatabaseException("We are sorry, but we cann create your accout at this moment. Please try again later.");
             }
 
@@ -71,7 +68,7 @@ class UserModel{
   //Method to delete user
   public function delete_user ($userId): bool {
     //Santize
-    $userId = $this->dbConnection->real_escape_string(trim(filter_var($userId, ILTER_VALIDATE_INT)));
+    $userId = $this->dbConnection->real_escape_string(trim(filter_var($userId, FILTER_VALIDATE_INT)));
 
     //SQL DELETE STATEMENT
     $sql = "DELETE FROM $this->tblUsers WHERE user_id = $userId";
@@ -84,7 +81,7 @@ class UserModel{
   //Method to verify user
   public function verify_user(): bool {
     $username = $this->dbConnection-> real_escape_string(trim(htmlspecialchars($_POST ['username'])));
-    $password = $this->dbConnection-> real_escape_string(trim(password_hash($_POST, ['password_hash'])));
+    $password = $this->dbConnection-> real_escape_string(trim(password_hash($_POST ['password_hash'])));
 
     //SQL SELECT statement
     $sql = "SELECT password_hash FROM $this->tblUsers WHERE username = '$username'";
@@ -114,7 +111,7 @@ class UserModel{
     $password = $this->dbConnection-> real_escape_string(trim(htmlspecialchars($_POST, ['password_hash'])));;
 
     //Hash the password
-    $hashed_password = password_hash($newPassword, PASSWORD_DEFAULT);
+    $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
     //SQL UPDATE statement
     $sql = "UPDATE $this->tblUsers SET password_hash = '$hashed_password' WHERE username = '$username'";
@@ -140,7 +137,7 @@ class UserModel{
       SET username = '$username', email = '$email', firstName = '$firstName' , lastName = '$lastName'
       WHERE user_id = $userId";
     
-      return $this->dbConnection->query($sql) === true
+      return $this->dbConnection->query($sql) === true;
   }
                           
   
