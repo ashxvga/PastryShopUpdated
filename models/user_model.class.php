@@ -18,12 +18,12 @@ class UserModel{
   }
   //Method to add user
   public function add_user(): bool {
-    $username = $this->dbConnection-> real_escape_string(trim(filter_input(INPUT_POST, 'username', FILTER_SANITIZE_STRING)));
-    $password = $this->dbConnection-> real_escape_string(trim(filter_input(INPUT_POST, 'password', FILTER_SANITIZE_STRING)));
+    $username = $this->dbConnection-> real_escape_string(trim(htmlspecialchars($_POST ['username'])));
+    $password = $this->dbConnection-> real_escape_string(trim(htmlspecialchars($_POST, ['password'])));
     $email = $this->dbConnection-> real_escape_string(trim(filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL)));
-    $firstName = $this->dbConnection-> real_escape_string(trim(filter_input(INPUT_POST, 'first_name', FILTER_SANITIZE_STRING)));
-    $lastName = $this->dbConnection-> real_escape_string(trim(filter_input(INPUT_POST, 'last_name', FILTER_SANITIZE_STRING)));
-    $role = $this->dbConnection-> real_escape_string(trim(filter_input(INPUT_POST, 'role', FILTER_SANITIZE_STRING))) ?: 'customer';
+    $firstName = $this->dbConnection-> real_escape_string(trim(htmlspecialchars($_POST, ['first_name'])));
+    $lastName = $this->dbConnection-> real_escape_string(trim(htmlspecialchars($_POST, ['last_name'])));
+    $role = $this->dbConnection-> real_escape_string(trim(htmlspecialchars($_POST, ['role'] ))) ?: 'customer';
 
     //Hash the password
     $hashed_password = password_hash($password, PASSWORD_DEFAULT);
@@ -43,11 +43,24 @@ class UserModel{
     
     return $this->dbConnection->query($sql) === true;
   }
+  
+  //Method to delete user
+  public function delete_user ($userId): bool {
+    //Santize
+    $userId = $this->dbConnection->real_escape_string(trim(filter_var($userId, ILTER_VALIDATE_INT)));
+
+    //SQL DELETE STATEMENT
+    $sql = "DELETE FROM $this->tblUsers WHERE user_id = $userId";
+    
+     // Execute the query and return the result
+    return $this->dbConnection->query($sql) === true;
+    
+  }
 
   //Method to verify user
   public function verify_user(): bool {
-    $username = $this->dbConnection-> real_escape_string(trim(filter_input(INPUT_POST, 'username', FILTER_SANITIZE_STRING)));
-    $password = $this->dbConnection-> real_escape_string(trim(filter_input(INPUT_POST, 'password', FILTER_SANITIZE_STRING)));
+    $username = $this->dbConnection-> real_escape_string(trim(htmlspecialchars($_POST ['username'])));
+    $password = $this->dbConnection-> real_escape_string(trim(htmlspecialchars($_POST, ['password'])));
 
     //SQL SELECT statement
     $sql = "SELECT password_hash FROM $this->tblUsers WHERE username = '$username'";
@@ -73,8 +86,8 @@ class UserModel{
     
   //Method to reset user's password
   public function reset_password():bool{
-    $username = $this->dbConnection-> real_escape_string(trim(filter_input(INPUT_POST, 'username', FILTER_SANITIZE_STRING)));
-    $newPassword = $this->dbConnection-> real_escape_string(trim(filter_input(INPUT_POST, 'password', FILTER_SANITIZE_STRING)));
+    $username = $this->dbConnection-> real_escape_string(trim(htmlspecialchars($_POST ['username'])));
+    $password = $this->dbConnection-> real_escape_string(trim(htmlspecialchars($_POST, ['password'])));;
 
     //Hash the password
     $hashed_password = password_hash($newPassword, PASSWORD_DEFAULT);
