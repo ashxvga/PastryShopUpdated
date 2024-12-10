@@ -60,7 +60,7 @@ class UserModel{
   //Method to verify user
   public function verify_user(): bool {
     $username = $this->dbConnection-> real_escape_string(trim(htmlspecialchars($_POST ['username'])));
-    $password = $this->dbConnection-> (password_hash($_POST, ['password']));
+    $password = $this->dbConnection-> real_escape_string(trim(password_hash($_POST, ['password'])));
 
     //SQL SELECT statement
     $sql = "SELECT password_hash FROM $this->tblUsers WHERE username = '$username'";
