@@ -10,6 +10,7 @@ require_once 'models/user_model.class.php';
 
 class UserController
 {
+
     private UserModel $user_model;
 
     // Default constructor
@@ -22,162 +23,135 @@ class UserController
     // Index action to display a generic user dashboard
     public function index(): void
     {
-        try {
-            // Display the user dashboard view
-            $dashboardView = new UserDashboardView();
-            $dashboardView->display();
-
-        } catch (Exception $e) {
-            $this->error($e->getMessage());
-        }
+        // Display the user dashboard view
+        $dashboardView = new UserDashboardView();
+        $dashboardView->display();
     }
 
     // Show the add user form
     public function add(): void
     {
-        try {
-            // Display the add user form view
-            $addUserView = new AddUserView();
-            $addUserView->display();
-
-        } catch (Exception $e) {
-            $this->error($e->getMessage());
-        }
+        // Display the add user form view
+        $addUserView = new AddUserView();
+        $addUserView->display();
     }
 
     // Add a new user
     public function add_user(): void
     {
-        try {
-            $result = $this->user_model->add_user();
-            if (!$result) {
-                throw new DatabaseExecutionException("Error: Unable to add the user. Username or email may already exist.");
-            }
-
-            // Redirect to user dashboard or show success message
-            header('Location: ' . BASE_URL . '/user/dashboard');
-            exit;
-
-        } catch (DatabaseExecutionException $e) {
-            $this->error($e->getMessage());
+        $result = $this->user_model->add_user();
+        if (!$result) {
+            $this->error("Error: Unable to add the user. Username or email may already exist.");
+            return;
         }
+
+        // Redirect to user dashboard or show success message
+        header('Location: ' . BASE_URL . '/user/dashboard');
+        exit;
     }
 
     // Show the edit user form
     public function edit($id): void
     {
-        try {
-            $user = $this->user_model->get_user_by_id($id);
-            if (!$user) {
-                throw new DataMissingException("User not found.");
-            }
-
-            $editUserView = new EditUserView();
-            $editUserView->display($user);
-
-        } catch (DataMissingException $e) {
-            $this->error($e->getMessage());
+        $user = $this->user_model->get_user_by_id($id);
+        if (!$user) {
+            $this->error("User not found.");
+            return;
         }
-    }
 
+        // Display the edit user view
+        $editUserView = new EditUserView();
+        $editUserView->display($user);
+    }
 
     // Update a user
     public function update_user($id): void
     {
-        try {
-            $result = $this->user_model->update_user($id);
-            if (!$result) {
-                throw new DatabaseExecutionException("Error: Unable to update the user.");
-            }
-
-            // Redirect to user dashboard or show success message
-            header('Location: ' . BASE_URL . '/user/dashboard');
-            exit;
-
-        } catch (DatabaseExecutionException $e) {
-            $this->error($e->getMessage());
+        $result = $this->user_model->update_user($id);
+        if (!$result) {
+            $this->error("Error: Unable to update the user.");
+            return;
         }
+
+        // Redirect to user dashboard or show success message
+        header('Location: ' . BASE_URL . '/user/dashboard');
+        exit;
     }
 
     // Delete a user
     public function delete($id): void
     {
-        try {
-            $result = $this->user_model->delete_user($id);
-            if (!$result) {
-                throw new DatabaseExecutionException("Error deleting user.");
-            }
-
-            header('Location: ' . BASE_URL . '/user/dashboard');
-            exit;
-
-        } catch (DatabaseExecutionException $e) {
-            $this->error($e->getMessage());
+        $result = $this->user_model->delete_user($id);
+        if (!$result) {
+            $this->error("Error deleting user.");
+            return;
         }
+
+        // Redirect to user dashboard or show success message
+        header('Location: ' . BASE_URL . '/user/dashboard');
+        exit;
     }
 
     // Show the login form
     public function login(): void
     {
-        try {
-            // Display the login view
-            $loginView = new LoginView();
-            $loginView->display();
-
-        } catch (Exception $e) {
-            $this->error($e->getMessage());
-        }
+        // Display the login view
+        $loginView = new LoginView();
+        $loginView->display();
     }
 
     // Verify user credentials and log them in
     public function login_user(): void
     {
-        try {
-            $result = $this->user_model->verify_user();
-            if (!$result) {
-                throw new DatabaseExecutionException("Login failed. Invalid username or password.");
-            }
+        //Validate
+        if(isset($_POST['password'])){
+            //Sanitize
+            $password = trim(htmlspecialchars($_POST['password']));
+        };
+        //Validate
+        if(isset($_POST['username'])){
+            //Sanitize
+            $username = trim(htmlspecialchars($_POST['username']));
+        };
 
-            header('Location: ' . BASE_URL . '/user/dashboard');
-            exit;
-
-        } catch (DatabaseExecutionException $e) {
-            $this->error($e->getMessage());
+        $result = $this->user_model->verify_user($username, $password);
+        if (!$result) {
+            $this->error("Login failed. Invalid username or password.");
+            return;
         }
+
+        // Redirect to user dashboard or show success message
+        header('Location: ' . BASE_URL . '/user/dashboard');
+        exit;
     }
 
     // Log the user out
     public function logout(): void
     {
-        try {
-            $result = $this->user_model->logout();
-            if ($result) {
-                header('Location: ' . BASE_URL . '/user/login');
-                exit;
-            } else {
-                throw new DatabaseExecutionException("Error logging out.");
-            }
+        $result = $this->user_model->logout(); // Call the logout method of the model to destroy the session or authentication token
 
-        } catch (DatabaseExecutionException $e) {
-            $this->error($e->getMessage());
+        if ($result) {
+            // Redirect to login page after successful logout
+            header('Location: ' . BASE_URL . '/user/login');
+            exit; // Make sure the script stops after redirect
+        } else {
+            // If logout failed, show an error message
+            $this->error("Error logging out.");
         }
     }
 
     // Reset a user's password
     public function reset_password(): void
     {
-        try {
-            $result = $this->user_model->reset_password();
-            if (!$result) {
-                throw new DataMissingException("Error resetting password. User may not exist.");
-            }
-
-            header('Location: ' . BASE_URL . '/user/login');
-            exit;
-
-        } catch (DataMissingException $e) {
-            $this->error($e->getMessage());
+        $result = $this->user_model->reset_password();
+        if (!$result) {
+            $this->error("Error resetting password. User may not exist.");
+            return;
         }
+
+        // Redirect to login page or show success message
+        header('Location: ' . BASE_URL . '/user/login');
+        exit;
     }
 
     // Error handler
