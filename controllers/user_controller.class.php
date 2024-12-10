@@ -5,6 +5,9 @@
  * File: user_controller.class.php
  * Description: The user controller handles user-related actions.
  */
+
+require_once 'models/user_model.class.php';
+
 class UserController
 {
 
