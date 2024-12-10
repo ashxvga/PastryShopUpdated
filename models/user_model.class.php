@@ -81,12 +81,12 @@ class UserModel{
     //Method to verify user
     public function verify_user($username,$password): bool {
         isset($_POST['username']);{
-            
+
         };
         $username = $this->dbConnection-> real_escape_string($username);
         $password = $this->dbConnection-> real_escape_string($password);
-        
-        $password_hash = password_hash($password, PASSWORD_DEFAULT);
+
+        //$password_hash = password_hash($password, PASSWORD_DEFAULT);
 
         //SQL SELECT statement
         $sql = "SELECT password_hash FROM $this->tblUsers WHERE username = '$username'";
@@ -96,7 +96,7 @@ class UserModel{
         //verify password; if password is valid, set a temporary cookie
         if($result && $result->num_rows > 0) {
             $row = $result->fetch_assoc();
-            if (password_verify($password_hash, $row['password_hash'])) {
+            if (password_verify($password, $row['password_hash'])) {
                 setcookie("user", $username, time() + 3600, "/");
                 return true;
             }
@@ -144,7 +144,3 @@ class UserModel{
 
         return $this->dbConnection->query($sql) === true;
     }
-
-
-
-}
