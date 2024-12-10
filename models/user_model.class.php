@@ -84,7 +84,7 @@ class UserModel{
   //Method to verify user
   public function verify_user(): bool {
     $username = $this->dbConnection-> real_escape_string(trim(htmlspecialchars($_POST ['username'])));
-    $password = $this->dbConnection-> real_escape_string(trim(password_hash($_POST, ['password'])));
+    $password = $this->dbConnection-> real_escape_string(trim(password_hash($_POST, ['password_hash'])));
 
     //SQL SELECT statement
     $sql = "SELECT password_hash FROM $this->tblUsers WHERE username = '$username'";
@@ -111,7 +111,7 @@ class UserModel{
   //Method to reset user's password
   public function reset_password():bool{
     $username = $this->dbConnection-> real_escape_string(trim(htmlspecialchars($_POST ['username'])));
-    $password = $this->dbConnection-> real_escape_string(trim(htmlspecialchars($_POST, ['password'])));;
+    $password = $this->dbConnection-> real_escape_string(trim(htmlspecialchars($_POST, ['password_hash'])));;
 
     //Hash the password
     $hashed_password = password_hash($newPassword, PASSWORD_DEFAULT);
