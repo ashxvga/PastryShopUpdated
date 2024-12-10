@@ -97,16 +97,27 @@ class UserModel{
     return $this->dbConnection->query($sql) === true && $this->dbConnection->affected_rows >0;
   }
 
-  //Need to update
-  //Method to update user's role
- // public function update_role ($userId, $role) : bool{
-   // if (!filter_has_var(INPUT_POST, 'category_name')){
-     //       return false;
-       // }
+  //Method to update user
+  public function update_user ($userId) : bool{
+     if (!filter_has_var(INPUT_POST, 'username') ||
+         !filter_has_var(INPUT_POST,'email') ||
+         !filter_has_var(INPUT_POST,'firstName') ||
+         !filter_has_var(INPUT_POST, 'lastName') )
+     {
+          return false;
+        }
+    $username = $this->dbConnection-> real_escape_string(trim(htmlspecialchars($_POST ['username'])));
+    $email = $this->dbConnection-> real_escape_string(trim(filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL)));
+    $firstName = $this->dbConnection-> real_escape_string(trim(htmlspecialchars($_POST, ['first_name'])));
+    $lastName = $this->dbConnection-> real_escape_string(trim(htmlspecialchars($_POST, ['last_name'])));
+
+    //SQL UPDATE statement
+      $sql = "UPDATE $this->tblUsers 
+      SET username = '$username', email = '$email', firstName = '$firstName' , lastName = '$lastName'
+      WHERE user_id = $userId";
     
-  //  $sql = "UPDATE $this->tblUsers SET role = 'role' WHERE user_id = $userid";
-  //  return $this->dbConnection->query($sql) === true
- // }
+      return $this->dbConnection->query($sql) === true
+  }
                           
   
   
