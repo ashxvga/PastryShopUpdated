@@ -19,30 +19,54 @@ class UserModel{
   //Method to add user
   public function add_user(): bool {
     $username = $this->dbConnection-> real_escape_string(trim(htmlspecialchars($_POST ['username'])));
-    $password = $this->dbConnection-> real_escape_string(trim(htmlspecialchars($_POST, ['password'])));
+    $password = $this->dbConnection-> real_escape_string(trim(htmlspecialchars($_POST, ['password_hash'])));
     $email = $this->dbConnection-> real_escape_string(trim(filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL)));
     $firstName = $this->dbConnection-> real_escape_string(trim(htmlspecialchars($_POST, ['first_name'])));
     $lastName = $this->dbConnection-> real_escape_string(trim(htmlspecialchars($_POST, ['last_name'])));
     $role = $this->dbConnection-> real_escape_string(trim(htmlspecialchars($_POST, ['role'] ))) ?: 'customer';
 
+    try {
+      //Handle data missing exeception. All fields are required
+      if (empty ($username) || empty ($password) || empty ($email) || empty ($firstName) ||empty ($lastName)){
+        throw new DataMissingExeception ("Values were missing in one or more fields. All fields must be filled.");
+      }
+      //Handle data length excpection. The min length of a password is 5
+      if (strlen($password) < 5){
+        throw new DataLengthException ("Your password was invalid. The minium length of a password is 5."
+      }
+      //Handle email format exeception.
+      if (!Utilities:::checkemail ($email)) {
+        throw new EmailFormatException ("Your email format was invalid. The general format of an email address is user@example.com");
+      }
     //Hash the password
     $hashed_password = password_hash($password, PASSWORD_DEFAULT);
-
     //Check if username or email exists
     $check = "SELECT * FROM $this->tblUsers WHERE username = '$username' OR email = '$email'";
     $result = $this->dbConnection->query($check);
-    
     //Return false
-    if ($result && $result->num_rows > 0){
-      return false;
+    if ($this->dbConnection->query($sql) === FALSE 
     }
-    
     //SQL INSERT statement
     $sql = " INSERT INTO $this->tblUsers (username, password_hash, email, first_name, last_name, role)
             VALUES ('$username', '$hashed_password', '$email', '$firstName', '$lastName', '$role')";
-    
-    return $this->dbConnection->query($sql) === true;
-  }
+    if ( $this->dbConnection->query($sql) === FALSE {
+        throw new DatabaseException("We are sorry, but we cann create your accout at this moment. Please try again later.");
+            }
+
+            return "Your account has been successfully created.";
+        } catch (DataMissingException $e) {
+            return $e->getMessage();
+        } catch (DataLengthException $e) {
+            return $e->getMessage();
+        } catch (DatabaseException $e) {
+            return $e->getMessage();
+        } catch (EmailFormatException $e) {
+            return $e->getMessage();
+        } catch (Exception $e) {
+            return $e->getMessage();
+        }
+    }
+  
   
   //Method to delete user
   public function delete_user ($userId): bool {
