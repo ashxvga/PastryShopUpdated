@@ -1,3 +1,13 @@
+<?php
+/**
+ * Author: Deirdre Leib
+ * Date: 12/5/24
+ * File: user_controller.class.php
+ * Description: The user controller handles user-related actions.
+ */
+
+require_once 'models/user_model.class.php';
+
 class UserController
 {
 
@@ -94,8 +104,8 @@ class UserController
     public function login_user(): void
     {
         //Validate
-        $username = trim(htmlspecialchars($_POST['username']));
-        $password = trim(htmlspecialchars($_POST['password']));
+        //$username = trim(htmlspecialchars($_POST['username']));
+        //$password = trim(htmlspecialchars($_POST['password']));
         if (empty($username) || empty($password)) {
             $this->error("Username or password is missing.");
             return;
