@@ -101,46 +101,21 @@ class UserController
     }
 
  // Verify user credentials and log them in
-    public function login_user(): void
-    {
-        var_dump ($_POST);
-        exit;
+    public function login_user(): void {
+        try {
+            if(isset($_POST['password'])){
+                $password = trim(htmlspecialchars($_POST['password'])); };
+            if(isset($_POST['username'])){
+                $username = trim(htmlspecialchars($_POST['username'])); };
+            $result = $this->user_model->verify_user($username, $password);
+            if (!$result) {  
+                throw new Exception("Login failed. Invalid username or password."); }
+            header('Location: ' . BASE_URL . '/user/dashboard');
+            exit;
+        }catch (Exception $e){
+            $this->error("An unexpected error occured: " . $e->getMessage());
+        }
     }
-    //  try {
-    //        if (!isset($_POST['username']) || !isset($_POST['password'])){
-      //          throw new DataMissingException ("Username or password is missing.");
-        //    }
-        //Validate
-          //  $username = trim(htmlspecialchars($_POST['username']));
-            //$password = trim(htmlspecialchars($_POST['password']));
-            
-            //if (empty($username) || empty($password)) {
-              //  throw new DataMissingException ("Username or password is missing.");
-            //}
-            
-            //$result = $this->user_model->verify_user($username, $password);
-            
-      //      if ($result){
-        //        header('Location: ' . BASE_URL . '/user/dashboard');
-         //       exit;
-           // } else {
-             //   $this->error("Login failed. Invalid username or password.");
-               //     }
-       // } catch (DataMissingException  $e) {
-         //   $this->error($e->getMessage());
-       // } catch ( Exception $e) {
-         //   $this->error("An unexpected error occurred: " . $e->getMessage());
-    //    }
-   // }
-    //if(isset($_POST['password'])){
-    //  $password = trim(htmlspecialchars($_POST['password'])); };
-    //  if(isset($_POST['username'])){
-    //      $username = trim(htmlspecialchars($_POST['username'])); };
-    //   $result = $this->user_model->verify_user($username, $password);
-    // if (!$result) {  $this->error("Login failed. Invalid username or password.");return; }
-
-    // Redirect to user dashboard or show success message
-    //header('Location: ' . BASE_URL . '/user/dashboard');//exit;
 
 
 // Log the user out
