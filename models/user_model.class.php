@@ -78,37 +78,56 @@ class UserModel{
 
     }
 
-    //Method to verify user
-    public function verify_user($username,$password): bool {
-        isset($_POST['username']);{
-        };
-        $username = $this->dbConnection-> real_escape_string($username);
-        $password = $this->dbConnection-> real_escape_string($password);
-
-        //$password_hash = password_hash($password, PASSWORD_DEFAULT);
-
-        //SQL SELECT statement
-        $sql = "SELECT password_hash FROM $this->tblUsers WHERE username = '$username'";
-
-        $result = $this->dbConnection->query($sql);
-
-        //verify password; if password is valid, set a temporary cookie
-        if($result->num_rows > 0) {
-            $row = $result->fetch_assoc();
-            if (password_verify($password, $row['password_hash'])) {
-                setcookie("user", $username, time() + 3600, "/");
-                return true;
-            }
-
+    // Method to verify user
+    public function verify_user($username, $password): bool {
+        try {
+            if (!isset($_POST['username']) || !isset($_POST['password'])) {
+                throw new DataMissingException("Username or password is missing.");
         }
-        return false;
+
+            // Sanitize
+            $username = $this->dbConnection->real_escape_string($username);
+            $password = $this->dbConnection->real_escape_string($password);
+
+             // SQL SELECT statement
+            $sql = "SELECT password_hash FROM $this->tblUsers WHERE username = '$username'";
+
+            // Execute query
+            $result = $this->dbConnection->query($sql);
+
+            // Check if user exists
+            if (!$result || $result->num_rows === 0) {
+                throw new DatabaseException("Invalid username or password."); }
+
+            $row = $result->fetch_assoc();
+            $hashed_password = $row['password_hash'];
+
+            // Verify the password
+            if (!password_verify($password, $hashed_password)) {
+                throw new DatabaseException("Invalid username or password."); }
+
+            // Set cookie
+            setcookie("user", $username, time() + 3600, "/");
+            return true;
+        } catch (DataMissingException $e) {
+            echo $e->getMessage();
+            return false;
+        } catch (DatabaseException $e) {
+            echo $e->getMessage();
+            return false;
+        } catch (Exception $e) {
+            echo "An unexpected error occurred: " . $e->getMessage();
+            return false;
     }
+}
+
+            
     //Method to log user out
     public function logout(): bool{
         //destroy session data
         setcookie("user", "", time() -3600, "/");
         return true;
-    }
+        
 
     //Method to reset user's password
     public function reset_password():bool{
