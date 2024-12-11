@@ -100,6 +100,7 @@ class UserModel{
                 setcookie("user", $username, time() + 3600, "/");
                 return true;
             }
+
         }
         return false;
     }
@@ -144,3 +145,7 @@ class UserModel{
 
         return $this->dbConnection->query($sql) === true;
     }
+
+
+
+}
