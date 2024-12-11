@@ -103,22 +103,29 @@ class UserController
     // Verify user credentials and log them in
     public function login_user(): void
     {
-        //Validate
-        //$username = trim(htmlspecialchars($_POST['username']));
-        //$password = trim(htmlspecialchars($_POST['password']));
-        if (empty($username) || empty($password)) {
-            $this->error("Username or password is missing.");
-            return;
-        }
-
         try {
+            if (!isset($_POST['username']) || !isset($_POST['password'])){
+                throw new DataMissingException ("Username or password is missing.");
+            }
+        //Validate
+            $username = trim(htmlspecialchars($_POST['username']));
+            $password = trim(htmlspecialchars($_POST['password']));
+            
+            if (empty($username) || empty($password)) {
+                throw new DataMissingException ("Username or password is missing.");
+            }
+            
             $result = $this->user_model->verify_user($username, $password);
+            
             if ($result){
                 header('Location: ' . BASE_URL . '/user/dashboard');
                 exit;
             } else {
                 $this->error("Login failed. Invalid username or password.");
                     }
+            } catch (DatabaseExecutionException  $e) {
+            echo $e->getMessage();
+            return false;
         } catch ( Exception $e) {
             $this->error("An unexpected error occurred: " . $e->getMessage());
         }
