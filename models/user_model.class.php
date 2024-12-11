@@ -81,7 +81,6 @@ class UserModel{
     //Method to verify user
     public function verify_user($username,$password): bool {
         isset($_POST['username']);{
-
         };
         $username = $this->dbConnection-> real_escape_string($username);
         $password = $this->dbConnection-> real_escape_string($password);
@@ -94,7 +93,7 @@ class UserModel{
         $result = $this->dbConnection->query($sql);
 
         //verify password; if password is valid, set a temporary cookie
-        if($result && $result->num_rows > 0) {
+        if($result->num_rows > 0) {
             $row = $result->fetch_assoc();
             if (password_verify($password, $row['password_hash'])) {
                 setcookie("user", $username, time() + 3600, "/");
