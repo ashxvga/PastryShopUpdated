@@ -81,13 +81,9 @@ class UserModel{
     // Method to verify user
     public function verify_user($username, $password): bool {
         try {
-            if (!isset($_POST['username']) || !isset($_POST['password'])) {
-                throw new DataMissingException("Username or password is missing.");
-        }
-
             // Sanitize
             $username = $this->dbConnection->real_escape_string($username);
-            $password = $this->dbConnection->real_escape_string($password);
+            //$password = $this->dbConnection->real_escape_string($password);
 
              // SQL SELECT statement
             $sql = "SELECT password_hash FROM $this->tblUsers WHERE username = '$username'";
@@ -109,9 +105,6 @@ class UserModel{
             // Set cookie
             setcookie("user", $username, time() + 3600, "/");
             return true;
-        } catch (DataMissingException $e) {
-            echo $e->getMessage();
-            return false;
         } catch (DatabaseExecutionException  $e) {
             echo $e->getMessage();
             return false;
