@@ -123,7 +123,7 @@ class UserController
             } else {
                 $this->error("Login failed. Invalid username or password.");
                     }
-        } catch (DatabaseExecutionException  $e) {
+        } catch (DataMissingException  $e) {
             $this->error($e->getMessage());
         } catch ( Exception $e) {
             $this->error("An unexpected error occurred: " . $e->getMessage());
