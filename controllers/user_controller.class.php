@@ -100,7 +100,7 @@ class UserController
         $loginView->display();
     }
 
-    // Verify user credentials and log them in
+ // Verify user credentials and log them in
     public function login_user(): void
     {
         try {
@@ -123,9 +123,8 @@ class UserController
             } else {
                 $this->error("Login failed. Invalid username or password.");
                     }
-            } catch (DatabaseExecutionException  $e) {
-            echo $e->getMessage();
-            return false;
+        } catch (DatabaseExecutionException  $e) {
+            $this->error($e->getMessage());
         } catch ( Exception $e) {
             $this->error("An unexpected error occurred: " . $e->getMessage());
         }
