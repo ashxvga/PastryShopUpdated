@@ -120,6 +120,7 @@ class UserModel{
         //destroy session data
         setcookie("user", "", time() -3600, "/");
         return true;
+    }
         
 
     //Method to reset user's password
