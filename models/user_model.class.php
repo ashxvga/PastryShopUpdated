@@ -97,14 +97,14 @@ class UserModel{
 
             // Check if user exists
             if (!$result || $result->num_rows === 0) {
-                throw new DatabaseException("Invalid username or password."); }
+                throw new DatabaseExecutionException ("Invalid username or password."); }
 
             $row = $result->fetch_assoc();
             $hashed_password = $row['password_hash'];
 
             // Verify the password
             if (!password_verify($password, $hashed_password)) {
-                throw new DatabaseException("Invalid username or password."); }
+                throw new DatabaseExecutionException ("Invalid username or password."); }
 
             // Set cookie
             setcookie("user", $username, time() + 3600, "/");
@@ -112,7 +112,7 @@ class UserModel{
         } catch (DataMissingException $e) {
             echo $e->getMessage();
             return false;
-        } catch (DatabaseException $e) {
+        } catch (DatabaseExecutionException  $e) {
             echo $e->getMessage();
             return false;
         } catch (Exception $e) {
