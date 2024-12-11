@@ -103,26 +103,33 @@ class UserController
     // Verify user credentials and log them in
     public function login_user(): void
     {
-        //Validate
-        if(isset($_POST['password'])){
-            //Sanitize
-            $password = trim(htmlspecialchars($_POST['password']));
-        };
-        //Validate
-        if(isset($_POST['username'])){
-            //Sanitize
-            $username = trim(htmlspecialchars($_POST['username']));
-        };
+        //Validate 
+        $username = trim(htmlspecialchars($_POST['username']));
+        $password = trim(htmlspecialchars($_POST['password']));
+        if (empty ($username) || empty ($password)){
+           return $this->error("Username or password is missing.");}
 
-        $result = $this->user_model->verify_user($username, $password);
-        if (!$result) {
-            $this->error("Login failed. Invalid username or password.");
-            return;
+        try {
+            $result = $this->user_model->verify_user($username, $password);
+            if ($result){
+                header('Location: ' . BASE_URL . '/user/dashboard');
+                exit;
+            } else {
+                $this->error("Login failed. Invalid username or password.")
+                    }
+        } catch ( Exception $e) {
+            $this->error("An unexpected error occurred: " . $e->getMessage());
         }
+    }
+        //if(isset($_POST['password'])){
+          //  $password = trim(htmlspecialchars($_POST['password'])); };
+      //  if(isset($_POST['username'])){
+      //      $username = trim(htmlspecialchars($_POST['username'])); };
+     //   $result = $this->user_model->verify_user($username, $password);
+       // if (!$result) {  $this->error("Login failed. Invalid username or password.");return; }
 
         // Redirect to user dashboard or show success message
-        header('Location: ' . BASE_URL . '/user/dashboard');
-        exit;
+        //header('Location: ' . BASE_URL . '/user/dashboard');//exit;
     }
 
     // Log the user out
