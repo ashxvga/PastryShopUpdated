@@ -103,32 +103,35 @@ class UserController
  // Verify user credentials and log them in
     public function login_user(): void
     {
-        try {
-            if (!isset($_POST['username']) || !isset($_POST['password'])){
-                throw new DataMissingException ("Username or password is missing.");
-            }
-        //Validate
-            $username = trim(htmlspecialchars($_POST['username']));
-            $password = trim(htmlspecialchars($_POST['password']));
-            
-            if (empty($username) || empty($password)) {
-                throw new DataMissingException ("Username or password is missing.");
-            }
-            
-            $result = $this->user_model->verify_user($username, $password);
-            
-            if ($result){
-                header('Location: ' . BASE_URL . '/user/dashboard');
-                exit;
-            } else {
-                $this->error("Login failed. Invalid username or password.");
-                    }
-        } catch (DataMissingException  $e) {
-            $this->error($e->getMessage());
-        } catch ( Exception $e) {
-            $this->error("An unexpected error occurred: " . $e->getMessage());
-        }
+        var_dump ($_POST);
+        exit;
     }
+    //  try {
+    //        if (!isset($_POST['username']) || !isset($_POST['password'])){
+      //          throw new DataMissingException ("Username or password is missing.");
+        //    }
+        //Validate
+          //  $username = trim(htmlspecialchars($_POST['username']));
+            //$password = trim(htmlspecialchars($_POST['password']));
+            
+            //if (empty($username) || empty($password)) {
+              //  throw new DataMissingException ("Username or password is missing.");
+            //}
+            
+            //$result = $this->user_model->verify_user($username, $password);
+            
+      //      if ($result){
+        //        header('Location: ' . BASE_URL . '/user/dashboard');
+         //       exit;
+           // } else {
+             //   $this->error("Login failed. Invalid username or password.");
+               //     }
+       // } catch (DataMissingException  $e) {
+         //   $this->error($e->getMessage());
+       // } catch ( Exception $e) {
+         //   $this->error("An unexpected error occurred: " . $e->getMessage());
+    //    }
+   // }
     //if(isset($_POST['password'])){
     //  $password = trim(htmlspecialchars($_POST['password'])); };
     //  if(isset($_POST['username'])){
