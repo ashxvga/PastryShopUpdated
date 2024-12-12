@@ -14,7 +14,7 @@ class UserModel
     //constructor
     public function __construct()
     {
-        session_start(); // Start session handling
+        //session_start(); // Start session handling
         $this->db = Database::getDatabase();
         $this->dbConnection = $this->db->getConnection();
         $this->tblUsers = $this->db->getUsersTable();
@@ -42,13 +42,13 @@ class UserModel
         $check = "SELECT * FROM $this->tblUsers WHERE username = '$username' OR email = '$email'";
         $result = $this->dbConnection->query($check);
         if ($check && $check->num_rows > 0){
-        throw new DatabaseException("Username or email already exists.");
-    }
-        
+            throw new DatabaseException("Username or email already exists.");
+        }
+
         //SQL INSERT statement
         $sql = " INSERT INTO $this->tblUsers (username, password_hash, email, first_name, last_name, role)
             VALUES ('$username', '$hashed_password', '$email', '$firstName', '$lastName', '$role')";
-        
+
         if ($this->dbConnection->query($sql) === FALSE) {
             throw new DatabaseException("We are sorry, but we cannot create your accout at this moment. Please try again later.");
         }
