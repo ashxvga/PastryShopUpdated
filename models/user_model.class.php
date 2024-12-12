@@ -19,11 +19,11 @@ class UserModel{
     //Method to add user
     public function add_user(): bool {
         $username = $this->dbConnection-> real_escape_string(trim(htmlspecialchars($_POST ['username'])));
-        $password = $this->dbConnection-> real_escape_string(trim(htmlspecialchars($_POST, ['password_hash'])));
+        $password = $this->dbConnection-> real_escape_string(trim(htmlspecialchars($_POST ['password_hash'])));
         $email = $this->dbConnection-> real_escape_string(trim(filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL)));
-        $firstName = $this->dbConnection-> real_escape_string(trim(htmlspecialchars($_POST, ['first_name'])));
-        $lastName = $this->dbConnection-> real_escape_string(trim(htmlspecialchars($_POST, ['last_name'])));
-        $role = $this->dbConnection-> real_escape_string(trim(htmlspecialchars($_POST, ['role'] ))) ?: 'customer';
+        $firstName = $this->dbConnection-> real_escape_string(trim(htmlspecialchars($_POST ['first_name'])));
+        $lastName = $this->dbConnection-> real_escape_string(trim(htmlspecialchars($_POST ['last_name'])));
+        $role = $this->dbConnection-> real_escape_string(trim(htmlspecialchars($_POST ['role'] ))) ?: 'customer';
 
         try {
             //Handle data missing exeception. All fields are required
@@ -32,7 +32,7 @@ class UserModel{
             }
             //Handle data length excpection. The min length of a password is 5
             if (strlen($password) < 5){
-                throw new DataLengthException ("Your password was invalid. The minium length of a password is 5.");
+                throw new DataLengthException ("Your password was invalid. The mininum length of a password is 5.");
             }
             //Handle email format exeception.
             if (!Utilities::checkemail ($email)) {
@@ -127,13 +127,36 @@ class UserModel{
     public function reset_password():bool{
         $username = $this->dbConnection-> real_escape_string(trim(htmlspecialchars($_POST ['username'])));
         $password = $this->dbConnection-> real_escape_string(trim(htmlspecialchars($_POST, ['password_hash'])));;
+        try {
+            if (empty($username) || empty($password)) {
+                throw new DataMissingException("Values were missing in one or more fields. All fields must be filled.");
+            }
 
-        //Hash the password
-        $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+            //Handle data length exception. The min length of a password is 5.
+            if (strlen($password) < 5) {
+                throw new DataLengthException("Your password is invalid. The mininum length of a password is 5.");
+            }
+            //Hash the password
+            $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+            //SQL UPDATE statement
+            $sql = "UPDATE $this->tblUsers SET password_hash = '$hashed_password' WHERE username = '$username'";
+            //execute the query
+            $query = $this->dbConnection->query($sql);
 
-        //SQL UPDATE statement
-        $sql = "UPDATE $this->tblUsers SET password_hash = '$hashed_password' WHERE username = '$username'";
-        return $this->dbConnection->query($sql) === true && $this->dbConnection->affected_rows >0;
+            //return false if no rows were affected
+            if (!$query || $this->dbConnection->affected_rows == 0) {
+                throw new DatabaseException("We are sorry, but we cannot reset your password at this moment. Please try again later.");
+            }
+            return "You have successfully reset your password.";
+        } catch (DataMissingException $e) {
+            return $e->getMessage();
+        } catch (DataLengthException $e) {
+            return $e->getMessage();
+        } catch (DatabaseException $e) {
+            return $e->getMessage();
+        } catch (Exception $e) {
+            return $e->getMessage();
+        }
     }
 
     //Method to update user
