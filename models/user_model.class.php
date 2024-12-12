@@ -14,6 +14,7 @@ class UserModel
     //constructor
     public function __construct()
     {
+        session_start(); // Start session handling
         $this->db = Database::getDatabase();
         $this->dbConnection = $this->db->getConnection();
         $this->tblUsers = $this->db->getUsersTable();
@@ -95,7 +96,9 @@ class UserModel
             throw new DatabaseExecutionException ("Invalid username or password.");
         }
 
-        // Set cookie
+        $_SESSION['user'] = $username;
+
+        // Optionally, set a cookie for convenience
         setcookie("user", $username, time() + 3600, "/");
         return true;
     }
@@ -104,11 +107,15 @@ class UserModel
     //Method to log user out
     public function logout(): bool
     {
-        //destroy session data
+        // Destroy session data
+        session_start(); // Ensure the session is active
+        session_unset();
+        session_destroy();
+
+        // Clear the cookie
         setcookie("user", "", time() - 3600, "/");
         return true;
     }
-
 
     //Method to reset user's password
     public function reset_password($username, $password): bool
