@@ -50,17 +50,23 @@ class UserController
             $firstName = $_POST['first_name'];
             $lastName = $_POST['last_name'];
 
-
             $result = $this->user_model->add_user($username, $password, $email, $firstName, $lastName);
             if ($result) {
+                $_SESSION['logged_in'] = true;
+                $_SESSION['user'] = [
+                    'id' => $result['id'],
+                    'username' => $username,
+                    'email' => $email
+                ];
                 header('Location: ' . BASE_URL . '/user/index');
                 exit;
-            }else {
-                $this->error("Error: Unable to add the user. Username or email may already exist.");            }
-        }catch (DataMissingException $e) {
+            } else {
+                $this->error("Error: Unable to add the user. Username or email may already exist.");
+            }
+        } catch (DataMissingException $e) {
             $this->error($e->getMessage());
-        }catch (Exception $e){
-            $this->error("An unexpected error occured: " . $e->getMessage());
+        } catch (Exception $e) {
+            $this->error("An unexpected error occurred: " . $e->getMessage());
         }
         //$result = $this->user_model->add_user();
         //if (!$result) {
@@ -134,17 +140,24 @@ class UserController
 
             $result = $this->user_model->verify_user($username, $password);
             if ($result) {
+                $_SESSION['logged_in'] = true;
+                $_SESSION['user'] = [
+                    'id' => $result['id'],
+                    'username' => $username,
+                    'email' => $result['email']
+                ];
                 header('Location: ' . BASE_URL . '/user/index');
                 exit;
-            }else {
+            } else {
                 $this->error("Login failed. Invalid username or password.");
             }
-        }catch (DataMissingException $e) {
+        } catch (DataMissingException $e) {
             $this->error($e->getMessage());
-        }catch (Exception $e){
-            $this->error("An unexpected error occured: " . $e->getMessage());
+        } catch (Exception $e) {
+            $this->error("An unexpected error occurred: " . $e->getMessage());
         }
     }
+
 
 
 // Log the user out
