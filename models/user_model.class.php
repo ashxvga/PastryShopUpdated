@@ -71,7 +71,7 @@ class UserModel
     }
 
     // Method to verify user
-    public function verify_user($username, $password): bool
+    public function verify_user($username, $password): string
     {
         // Sanitize
         $username = $this->dbConnection->real_escape_string($username);
@@ -95,6 +95,22 @@ class UserModel
         if (!password_verify($password, $hashed_password)) {
             throw new DatabaseExecutionException ("Invalid username or password.");
         }
+
+        // 3 Options for Session
+        // 1. When you construct a new User, set the session variables in the constructor of the new User
+        // 2. Here in the model, set the session details after retrieving the user
+        // 3. In the controller, return a User object, in which you get the details
+
+        // In the contents of your session
+        /*
+         * $_SESSION['user'] = <Your User Object>
+         * // To get role for example
+         * $role = $_SESSION['user']->getRole();
+         * // See if a user is logged in
+         * if(!isset($_SESSION['user'])) { ... code if user is not logged in }
+         * else { ... code if user is logged in }
+         *
+         */
 
         $_SESSION['user'] = $username;
 
