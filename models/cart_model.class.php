@@ -9,7 +9,7 @@ class CartModel
 {
     public function __construct()
     {
-        $this->cart = [];
+        session_start();
     }
 
     //Add a pastry to the cart
