@@ -16,7 +16,7 @@ class LoginView extends IndexView {
 
         <h1>Login</h1>
 
-        <form action="<?= BASE_URL . '/user/login_user' ?>" method="post">
+        <form class="new-media"  action='<?= BASE_URL?>/user/login_user' method="post">
             <p>Username:
                 <input type="text" name="username" required>
             </p>
@@ -24,7 +24,7 @@ class LoginView extends IndexView {
                 <input type="password" name="password" required>
             </p>
 
-            <input type="submit" value="Login">
+            <input type="submit" name="action" value="Login">
         </form>
 
         <?php
