@@ -85,7 +85,7 @@ class UserModel
 
         // Check if user exists
         if (!$result || $result->num_rows === 0) {
-            throw new DatabaseExecutionException ("Invalid username or password.");
+            throw new DatabaseException ("Invalid username or password.");
         }
 
         $row = $result->fetch_assoc();
@@ -93,7 +93,7 @@ class UserModel
 
         // Verify the password
         if (!password_verify($password, $hashed_password)) {
-            throw new DatabaseExecutionException ("Invalid username or password.");
+            throw new DatabaseException ("Invalid username or password.");
         }
 
         // 3 Options for Session
