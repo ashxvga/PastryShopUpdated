@@ -10,14 +10,14 @@ class User{
 
     // DO NOT SAVE THE PASSWORD HERE, YOU WILL GET ALL FIELDS EXCEPT PASSWORD HASH
     private int $userId;
-    private string $username, $passwordHash, $email, $role, $dateCreated;
+    private string $username, $email, $role, $dateCreated;
     private ?string $firstName, $lastName;
 
     //constructor
-    public function __construct ($userId, $username, $passwordHash, $email, $role, $dateCreated, $firstName, $lastName){
+    public function __construct ($userId, $username, $email, $role, $dateCreated, $firstName, $lastName){
         $this->userId = $userId;
         $this->username = $username;
-        $this->passwordHash = $passwordHash;
+       // $this->passwordHash = $passwordHash;
         $this->email = $email;
         $this->role = $role;
         $this->dateCreated = $dateCreated;
@@ -33,9 +33,9 @@ class User{
         return $this->username;
     }
     //get the password
-    public function getPasswordHash(): string {
-        return $this->passwordHash;
-    }
+ //   public function getPasswordHash(): string {
+   //     return $this->passwordHash;
+    //}
     //get the email
     public function getEmail(): string {
         return $this->email;
