@@ -17,17 +17,11 @@ class UserController
     // Default constructor
     public function __construct()
     {
+        session_start();
         // Create an instance of the UserModel class
         $this->user_model = new UserModel();
     }
 
-    // Index action to display a generic user dashboard
-    public function index(): void
-    {
-        // Display the user dashboard view
-        $dashboardView = new UserDashboardView();
-        $dashboardView->display();
-    }
 
     // Show the add user form
     public function add(): void
@@ -130,53 +124,52 @@ class UserController
     }
 
     // Verify user credentials and log them in
-    public function login_user(): void {
+    public function login_user(): void
+    {
         try {
-            var_dump($_POST);
-            if(empty ($_POST ['username']) || empty($_POST ['password'])){
-                throw new DataMissingException ("Username or password is missing");
+            if (empty($_POST['username']) || empty($_POST['password'])) {
+                throw new Exception("Username or password is missing");
             }
+
             $username = $_POST['username'];
             $password = $_POST['password'];
 
             $result = $this->user_model->verify_user($username, $password);
+
             if ($result) {
+                $_SESSION['user'] = $result; // Save the user object in session
                 $_SESSION['logged_in'] = true;
-                $_SESSION['user'] = [
-                    'id' => $result['id'],
-                    'username' => $username,
-                    'email' => $result['email']
-                ];
-                exit();
 
                 header('Location: ' . BASE_URL . '/user/index');
-                exit;
+                exit();
             } else {
-                $this->error("Login failed. Invalid username or password.");
+                $this->error("Invalid username or password.");
             }
-        } catch (DataMissingException $e) {
-            $this->error($e->getMessage());
         } catch (Exception $e) {
-            $this->error("An unexpected error occurred: " . $e->getMessage());
+            $this->error($e->getMessage());
         }
     }
-
 
 
 // Log the user out
     public function logout(): void
     {
-        $result = $this->user_model->logout(); // Call the logout method of the model to destroy the session or authentication token
+        session_start();
+        session_unset();
+        session_destroy();
 
-        if ($result) {
-            // Redirect to login page after successful logout
-            header('Location: ' . BASE_URL . '/user/login');
-            exit; // Make sure the script stops after redirect
-        } else {
-            // If logout failed, show an error message
-            $this->error("Error logging out.");
+        header('Location: ' . BASE_URL . '/user/login');
+        exit();
+    }
+
+    public function requireLogin(): void
+    {
+        if (!isset($_SESSION['user'])) {
+            header('Location: ' . BASE_URL . '/error/login_required');
+            exit();
         }
     }
+
 
 // Reset a user's password
     public function reset_password(): void
@@ -190,6 +183,15 @@ class UserController
         // Redirect to login page or show success message
         header('Location: ' . BASE_URL . '/user/login');
         exit;
+    }
+
+    // Index action to display a generic user dashboard
+    public function index(): void
+    {
+        // Display the user dashboard view
+        $this->requireLogin();
+        $dashboardView = new UserDashboardView();
+        $dashboardView->display();
     }
 
 // Error handler

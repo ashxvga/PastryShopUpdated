@@ -5,7 +5,6 @@
  * File: pastry_controller.class.php
  * Description:
  */
-session_start();
 
 class PastryController{
     private PastryModel $pastry_model;
@@ -21,7 +20,7 @@ class PastryController{
         if(!isset($_SESSION['user'])) {
             // Redirect to error
             $msg = "You need to be logged in to access this page.";
-            header(/* Your Error Page*/);
+            header('Location: ' . BASE_URL . '/user/error');
             exit;
         }
     }
@@ -32,7 +31,7 @@ class PastryController{
         if ($_SESSION['user']->getRole() !== 'admin') {
             // Redirect to error
             $msg = "You need to be an admin to access this page.";
-            header(/* Your Error Page*/);
+            header('Location: ' . BASE_URL . '/user/error');
             exit;
         }
     }

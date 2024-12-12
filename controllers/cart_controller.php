@@ -5,13 +5,13 @@
  * File: cart_controller.class.php
  * Description: A controller for interacting with the CartModel.
  */
-session_start();
 class CartController
 {
     private CartModel $cartModel;
 
     public function __construct()
     {
+        session_start();
         // Initialize the CartModel
         $this->cartModel = new CartModel();
     }
@@ -27,24 +27,22 @@ class CartController
     // Add a pastry to the cart
     public function addToCart($pastryId): void
     {
+        if (!isset($_SESSION['user'])) {
+            header('Location: ' . BASE_URL . '/error/login_required');
+            exit();
+        }
+
         $this->cartModel->add_cart($pastryId);
-       // echo "Pastry with ID $pastryId has been added to the cart.\n";
         header('Location: ' . BASE_URL . '/cart/index');
+        exit();
     }
 
     // Get all items in the cart
     public function getCart(): void
     {
         $cartItems = $this->cartModel->get_cart();
-        if (empty($cartItems)) {
-            echo "The cart is empty.\n";
-        } else {
-            echo "Items in your cart:\n";
-            //foreach ($cartItems as $item) {
-            //echo "- Pastry ID: $item\n";
-            $display = new CartView();
-            $display->display($cartItems);
-        }
+        $view = new CartView();
+        $view->display($cartItems);
     }
 }
 
