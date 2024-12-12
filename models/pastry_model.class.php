@@ -256,5 +256,6 @@ class PastryModel {
         // Execute the query and return the result
         return $this->dbConnection->query($sql) === true;
     }
+    //method to add to cart
 }
 ?>
