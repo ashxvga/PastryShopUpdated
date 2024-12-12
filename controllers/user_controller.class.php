@@ -6,7 +6,7 @@
  * Description: The user controller handles user-related actions.
  */
 
-session_start();
+
 require_once 'models/user_model.class.php';
 
 class UserController
@@ -70,8 +70,8 @@ class UserController
         }
         //$result = $this->user_model->add_user();
         //if (!$result) {
-          //  $this->error("Error: Unable to add the user. Username or email may already exist.");
-            //return;
+        //  $this->error("Error: Unable to add the user. Username or email may already exist.");
+        //return;
         //}
 
         // Redirect to user dashboard or show success message
@@ -82,54 +82,43 @@ class UserController
     // Show the edit user form
     public function edit($id): void
     {
-        try {
-             $user = $this->user_model->get_user_by_id($id);
-            if (!$user) {
-                throw Exception ("User not found.");
-            }
-                // Display the edit user view
-            $editUserView = new EditUserView();
-            $editUserView->display($user);
-            } catch (Exception $e) {
-            $this->error("An unexpected error occurred: " . $e->getMessage());
+        $user = $this->user_model->get_user_by_id($id);
+        if (!$user) {
+            $this->error("User not found.");
+            return;
         }
-    }
 
         // Display the edit user view
-      //  $editUserView = new EditUserView();
-        //$editUserView->display($user);
-    //}
+        $editUserView = new EditUserView();
+        $editUserView->display($user);
+    }
 
     // Update a user
     public function update_user($id): void
     {
-        try {
-            
-            $result = $this->user_model->update_user($id);
-            if (!$result) {
-                throw Exception ("Error: Unable to update the user.");
-            }
-            // Redirect to user dashboard or show success message
-            header('Location: ' . BASE_URL . '/user/index');
-            exit;} 
-        catch (Exception $e) {
-            $this->error("An unexpected error occurred: " . $e->getMessage());
+        $result = $this->user_model->update_user($id);
+        if (!$result) {
+            $this->error("Error: Unable to update the user.");
+            return;
         }
+
+        // Redirect to user dashboard or show success message
+        header('Location: ' . BASE_URL . '/user/index');
+        exit;
     }
 
     // Delete a user
     public function delete($id): void
-    { try{
+    {
         $result = $this->user_model->delete_user($id);
         if (!$result) {
-            throw Exception ("Error deleting user.");
+            $this->error("Error deleting user.");
+            return;
         }
+
         // Redirect to user dashboard or show success message
         header('Location: ' . BASE_URL . '/user/index');
         exit;
-    }  catch (Exception $e) {
-            $this->error("An unexpected error occurred: " . $e->getMessage());
-        }
     }
 
     // Show the login form
@@ -143,6 +132,7 @@ class UserController
     // Verify user credentials and log them in
     public function login_user(): void {
         try {
+            var_dump($_POST);
             if(empty ($_POST ['username']) || empty($_POST ['password'])){
                 throw new DataMissingException ("Username or password is missing");
             }
@@ -157,6 +147,8 @@ class UserController
                     'username' => $username,
                     'email' => $result['email']
                 ];
+                exit();
+
                 header('Location: ' . BASE_URL . '/user/index');
                 exit;
             } else {
@@ -173,34 +165,31 @@ class UserController
 
 // Log the user out
     public function logout(): void
-    { try{
+    {
         $result = $this->user_model->logout(); // Call the logout method of the model to destroy the session or authentication token
+
         if ($result) {
             // Redirect to login page after successful logout
             header('Location: ' . BASE_URL . '/user/login');
             exit; // Make sure the script stops after redirect
         } else {
             // If logout failed, show an error message
-            throw Exception ("Error logging out.");
-        }
-         }  catch (Exception $e) {
-            $this->error("An unexpected error occurred: " . $e->getMessage());
+            $this->error("Error logging out.");
         }
     }
 
 // Reset a user's password
     public function reset_password(): void
-    { try{
+    {
         $result = $this->user_model->reset_password();
         if (!$result) {
-            throw Exception ("Error resetting password. User may not exist.");
+            $this->error("Error resetting password. User may not exist.");
+            return;
         }
+
         // Redirect to login page or show success message
         header('Location: ' . BASE_URL . '/user/login');
         exit;
-     }  catch (Exception $e) {
-            $this->error("An unexpected error occurred: " . $e->getMessage());
-        }
     }
 
 // Error handler
