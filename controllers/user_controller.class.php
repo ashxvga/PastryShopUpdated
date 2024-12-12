@@ -6,6 +6,7 @@
  * Description: The user controller handles user-related actions.
  */
 
+session_start();
 require_once 'models/user_model.class.php';
 
 class UserController

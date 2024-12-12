@@ -7,8 +7,6 @@
  */
 class CartModel
 {
-    private array $cart;
-
     public function __construct()
     {
         $this->cart = [];
@@ -17,13 +15,20 @@ class CartModel
     //Add a pastry to the cart
     public function add_cart($pastryId): void
     {
-        $this->cart[] = $pastryId;
+        session_start();
+        if (!isset($_SESSION['cart'])) {
+            $_SESSION['cart'] = [];
+        }
+
+        // Add pastry ID to the cart
+        $_SESSION['cart'][] = $pastryId;
     }
 
     //Get all items
     public function get_cart(): array
     {
-        return $this->cart;
+        session_start(); // Ensure session is started
+        return $_SESSION['cart'] ?? []; // Return cart items, default empty array
     }
 }
   
